@@ -1,0 +1,59 @@
+name: Deploy
+
+on:
+  push:
+    tags:
+      - v*-dev
+      - v*-staging
+      - v*-prod
+
+jobs:
+
+  docker:
+    uses: FIT-Dev/dry-workflows/.github/workflows/docker.yml@v1.4.0
+    secrets:
+      cr_username: ${{ secrets.CR_USERNAME }}
+      cr_token: ${{ secrets.CR_TOKEN }}
+      mantichor_client_id: ${{ secrets.MANTICHOR_CLIENT_ID }}
+      mantichor_client_token: ${{ secrets.MANTICHOR_CLIENT_TOKEN }}
+      mantichor_url: ${{ secrets.MANTICHOR_URL }}
+      snyk_token: ${{ secrets.SNYK_TOKEN }}
+
+  development:
+    needs: docker
+    if: (github.event.base_ref != 'refs/heads/production') && (endsWith(github.event.ref, 'dev'))
+    uses: FIT-Dev/dry-workflows/.github/workflows/swarm.yml@v1.4.0
+    secrets:
+      cr_username: ${{ secrets.CR_USERNAME }}
+      cr_token: ${{ secrets.CR_TOKEN }}
+      mantichor_client_id: ${{ secrets.MANTICHOR_CLIENT_ID }}
+      mantichor_client_token: ${{ secrets.MANTICHOR_CLIENT_TOKEN }}
+      mantichor_url: ${{ secrets.MANTICHOR_URL }}
+      portainer_url: ${{ secrets.PORTAINER_URL }}
+      portainer_key: ${{ secrets.PORTAINER_KEY }}
+
+  staging:
+    needs: docker
+    if: (github.event.base_ref != 'refs/heads/staging') && (endsWith(github.event.ref, 'staging'))
+    uses: FIT-Dev/dry-workflows/.github/workflows/swarm.yml@v1.4.0
+    secrets:
+      cr_username: ${{ secrets.CR_USERNAME }}
+      cr_token: ${{ secrets.CR_TOKEN }}
+      mantichor_client_id: ${{ secrets.MANTICHOR_CLIENT_ID }}
+      mantichor_client_token: ${{ secrets.MANTICHOR_CLIENT_TOKEN }}
+      mantichor_url: ${{ secrets.MANTICHOR_URL }}
+      portainer_url: ${{ secrets.PORTAINER_URL }}
+      portainer_key: ${{ secrets.PORTAINER_KEY }}
+
+  production:
+    needs: docker
+    if: (github.event.base_ref == 'refs/heads/production') && (endsWith(github.event.ref, 'prod'))
+    uses: FIT-Dev/dry-workflows/.github/workflows/swarm.yml@v1.4.0
+    secrets:
+      cr_username: ${{ secrets.CR_USERNAME }}
+      cr_token: ${{ secrets.CR_TOKEN }}
+      mantichor_client_id: ${{ secrets.MANTICHOR_CLIENT_ID }}
+      mantichor_client_token: ${{ secrets.MANTICHOR_CLIENT_TOKEN }}
+      mantichor_url: ${{ secrets.MANTICHOR_URL }}
+      portainer_url: ${{ secrets.PORTAINER_URL }}
+      portainer_key: ${{ secrets.PORTAINER_KEY }}

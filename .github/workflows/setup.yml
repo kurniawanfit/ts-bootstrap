@@ -1,0 +1,21 @@
+name: Initial Setup for v1.4.0
+on: workflow_dispatch
+
+jobs:
+  setup:
+    runs-on: self-hosted
+    steps:
+      - name: Set output
+        id: vars
+        run: echo ::set-output name=repourl::${GITHUB_SERVER_URL}/${{github.repository}}
+      - name: mantichor-agent
+        id: mantichor-agent 
+        uses: mantichor/agent@v0.1.4
+        env:
+          mantichor_client_id: ${{ secrets.MANTICHOR_CLIENT_ID }}
+          mantichor_client_token: ${{ secrets.MANTICHOR_CLIENT_TOKEN }}
+          mantichor_url: ${{ secrets.MANTICHOR_URL }}
+          step: build
+          service_name: ${{github.event.repository.name}}
+          repository_name: ${{github.repository}}
+          repository_url: ${{ steps.vars.outputs.repourl }}

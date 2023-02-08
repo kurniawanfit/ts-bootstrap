@@ -1,0 +1,16 @@
+{
+  "watch": [
+    "connection/*",
+    "controller/*",
+    "exception/*",
+    "helper/*",
+    "middleware/*",
+    "route/*",
+    "sequelize/*",
+    "service/*",
+    "./.env.local"
+  ],
+  "ext": "ts js",
+  "ignore": ["node_modules/*", "build/*", "/**/*.spec.ts"],
+  "exec": "ts-node  ./server.ts"
+}
